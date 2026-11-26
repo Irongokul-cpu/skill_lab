@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A beginner-friendly Google Colab guide to installing and using the Google GenAI SDK with Gemini.">
+<title>Gemini in Google Colab — Quick Start</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2e;--panel2:#17213a;--text:#eef2ff;--muted:#aab5d0;--line:#293653;--accent:#a78bfa;--cyan:#67e8f9;--green:#86efac}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 80% 0%,#20234c 0,transparent 42%),var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}.wrap{max-width:940px;margin:auto;padding:52px 24px 80px}.eyebrow{color:var(--cyan);font-size:.76rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.hero{padding:12px 0 32px}.hero h1{font-size:clamp(2.25rem,6vw,4rem);line-height:1.06;letter-spacing:-.045em;margin:14px 0}.hero p{color:var(--muted);font-size:1.08rem;max-width:690px}.badge{display:inline-flex;border:1px solid #4a477c;background:#24234a;color:#d8ccff;border-radius:999px;padding:5px 11px;font-size:.83rem}.steps{display:grid;gap:18px}.card{background:linear-gradient(150deg,rgba(23,33,58,.96),rgba(18,26,46,.96));border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 16px 40px #0002}.cardhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}.num{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:11px;background:#302957;color:#d8ccff;font-weight:800}.card h2{font-size:1.22rem;margin:2px 0 3px}.card p{margin:5px 0 14px;color:var(--muted)}.codebox{position:relative;border:1px solid #2d3956;border-radius:12px;background:#090e1b;overflow:hidden}.codebox pre{margin:0;padding:20px 18px;overflow:auto;color:#dce6ff;font: .9rem/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre}.copy{position:absolute;right:10px;top:10px;border:1px solid #384666;background:#17213a;color:#e8edff;padding:7px 10px;border-radius:8px;font:600 .78rem system-ui;cursor:pointer}.copy:hover{background:#263251}.note{border-left:3px solid var(--accent);padding:10px 14px;margin-top:15px;background:#171832;border-radius:0 10px 10px 0;color:#d5d8ee;font-size:.92rem}.note strong{color:white}.success{color:var(--green)}.foot{margin-top:26px;text-align:center;color:#8490ac;font-size:.85rem}code.inline{color:#d8ccff;background:#1b2140;padding:2px 6px;border-radius:5px}@media(max-width:600px){.wrap{padding:32px 16px 56px}.card{padding:18px}.codebox pre{padding:48px 14px 16px;font-size:.82rem}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero">
+<div class="eyebrow">Python · Google Colab</div>
+<h1>Get started with Gemini</h1>
+<p>Install the Google GenAI SDK, connect a Gemini API key stored in Colab Secrets, and send your first prompts. Run the cells from top to bottom.</p>
+<span class="badge">Beginner quick start</span>
+</header>
+<section class="steps" aria-label="Setup steps">
+<article class="card">
+<div class="cardhead"><span class="num">1</span><div><h2>Install the packages</h2><p>In a Colab code cell, run this command. The <code class="inline">!</code> tells Colab to run a shell command.</p></div></div>
+<div class="codebox"><button class="copy" type="button">Copy</button><pre><code>!pip install -q "google-genai&gt;=2.12.1,&lt;3" "google-auth==2.49.0"</code></pre></div>
+</article>
+<article class="card">
+<div class="cardhead"><span class="num">2</span><div><h2>Check the installation</h2><p>Run this in a new Python cell to print the installed package versions.</p></div></div>
+<div class="codebox"><button class="copy" type="button">Copy</button><pre><code>from importlib.metadata import version
+
+print("Google GenAI SDK version:", version("google-genai"))
+print("Google Auth version:", version("google-auth"))
+print("Installation successful!")</code></pre></div>
+</article>
+<article class="card">
+<div class="cardhead"><span class="num">3</span><div><h2>Save your API key in Colab</h2><p>In Colab, open the <strong>Secrets</strong> panel (key icon), add a secret named <code class="inline">GEMINI_API_KEY</code>, paste your key as its value, and allow this notebook to access it.</p></div></div>
+<div class="note"><strong>Keep your key private.</strong> Store it in Colab Secrets; don’t paste it directly into a notebook you may share.</div>
+</article>
+<article class="card">
+<div class="cardhead"><span class="num">4</span><div><h2>Connect and send a first prompt</h2><p>This cell reads the saved secret, creates a client, and asks Gemini for a simple explanation.</p></div></div>
+<div class="codebox"><button class="copy" type="button">Copy</button><pre><code>from google import genai
+from google.colab import userdata
+
+api_key = userdata.get("GEMINI_API_KEY")
+if not api_key:
+    raise ValueError("Add GEMINI_API_KEY in the Colab Secrets panel.")
+
+client = genai.Client(api_key=api_key)
+
+response = client.models.generate_content(
+    model="gemini-3.5-flash-lite",
+    contents="Explain Agentic AI in simple English."
+)
+
+print(response.text)</code></pre></div>
+<div class="note success">If the response prints, the SDK and API connection are working.</div>
+</article>
+<article class="card">
+<div class="cardhead"><span class="num">5</span><div><h2>Ask for three examples</h2><p>Change the prompt to request a little more detail.</p></div></div>
+<div class="codebox"><button class="copy" type="button">Copy</button><pre><code>response = client.models.generate_content(
+    model="gemini-3.5-flash-lite",
+    contents="Explain Agentic AI in simple English with 3 examples."
+)
+
+print(response.text)</code></pre></div>
+</article>
+<article class="card">
+<div class="cardhead"><span class="num">6</span><div><h2>Ask your own question</h2><p>Enter a question when the cell runs, then print Gemini’s answer.</p></div></div>
+<div class="codebox"><button class="copy" type="button">Copy</button><pre><code>question = input("Ask Gemini anything: ")
+
+response = client.models.generate_content(
+    model="gemini-3.5-flash-lite",
+    contents=question
+)
+
+print("Gemini says:")
+print(response.text)</code></pre></div>
+</article>
+</section>
+<p class="foot">A Colab notebook quick start · Run setup cells before the prompt examples.</p>
+</main>
+<script>
+document.querySelectorAll('.copy').forEach(button=>button.addEventListener('click',async()=>{const code=button.parentElement.querySelector('code').innerText;try{await navigator.clipboard.writeText(code);button.textContent='Copied!';setTimeout(()=>button.textContent='Copy',1400)}catch{button.textContent='Select and copy';setTimeout(()=>button.textContent='Copy',1800)}}));
+</script>
+</body>
+</html>
